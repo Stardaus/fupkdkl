@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FUPKDKL App Overview</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&family=Plus+Jakarta+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        /* --- RESET & BASE STYLES --- */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            background-color: #f8fafc;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            color: #334155;
+            /* SLIDESHOW LAYOUT ADJUSTMENTS */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow: hidden; /* Hide scrollbars for presentation mode */
+            margin: 0;
+        }
+
+        /* --- SLIDE CONTAINER (16:9 Aspect Ratio) --- */
+        .slide {
+            width: 1280px;
+            height: 720px;
+            background: white;
+            border-radius: 24px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.06);
+            /* POSITIONING FOR SLIDESHOW STACKING */
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            overflow: hidden;
+            display: flex;
+            padding: 60px;
+            
+            /* HIDDEN STATE BY DEFAULT */
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.4s ease-in-out;
+            pointer-events: none;
+            
+            page-break-after: always; /* For printing/PDF export */
+        }
+
+        /* ACTIVE SLIDE STATE */
+        .slide.active {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+            z-index: 10;
+        }
+
+        /* --- PASTEL BACKGROUND BLOBS --- */
+        .blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(60px);
+            z-index: 0;
+            opacity: 0.7;
+        }
+        .blob-blue { background: #dbeafe; width: 500px; height: 500px; top: -100px; right: -100px; }
+        .blob-purple { background: #f3e8ff; width: 400px; height: 400px; bottom: -50px; left: -50px; }
+        .blob-green { background: #dcfce7; width: 300px; height: 300px; top: 40%; left: 40%; opacity: 0.4; }
+        .blob-pink { background: #fce7f3; width: 450px; height: 450px; top: -150px; left: 20%; }
+
+        /* --- CONTENT LAYER --- */
+        .content {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            height: 100%;
+            display: grid;
+        }
+
+        /* --- TYPOGRAPHY --- */
+        h1, h2, h3 { font-family: 'Outfit', sans-serif; line-height: 1.1; }
+        h1 { font-size: 64px; font-weight: 600; color: #1e293b; margin-bottom: 20px; }
+        h2 { font-size: 42px; font-weight: 600; color: #1e293b; margin-bottom: 24px; }
+        h3 { font-size: 24px; font-weight: 600; color: #475569; margin-bottom: 12px; }
+        p { font-size: 18px; line-height: 1.6; color: #64748b; margin-bottom: 20px; }
+        
+        .pill {
+            display: inline-block;
+            padding: 8px 16px;
+            background: #e0f2fe;
+            color: #0369a1;
+            border-radius: 50px;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 24px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* --- MOCKUP CONTAINERS --- */
+        .mockup-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+        }
+
+        .phone-mockup {
+            width: 280px; /* Adjust based on your screenshot aspect ratio */
+            height: 600px;
+            background: #1e293b;
+            border-radius: 36px;
+            padding: 12px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            position: relative;
+            border: 4px solid #334155;
+        }
+
+        .phone-mockup img, 
+        .phone-mockup video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 24px;
+            display: block;
+            background: #000; /* Fallback for dark mode screenshots */
+        }
+
+        /* --- LAYOUTS --- */
+        
+        /* Layout: Title Slide */
+        .layout-title {
+            grid-template-columns: 1fr 1fr;
+            align-items: center;
+            gap: 40px;
+        }
+
+        /* Layout: Split Content */
+        .layout-split {
+            grid-template-columns: 1fr 1fr;
+            align-items: center;
+            gap: 60px;
+        }
+
+        /* Layout: Feature Highlight (Text Left) */
+        .text-block {
+            padding-right: 40px;
+        }
+
+        /* Feature List */
+        .feature-list {
+            list-style: none;
+            margin-top: 20px;
+        }
+        .feature-list li {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 15px;
+            font-size: 18px;
+            color: #475569;
+        }
+        .feature-list i {
+            color: #8b5cf6; /* Violet */
+            margin-right: 15px;
+            margin-top: 5px;
+        }
+
+        /* Caption for visuals */
+        .caption {
+            text-align: center;
+            margin-top: 15px;
+            font-size: 14px;
+            color: #94a3b8;
+            font-style: italic;
+        }
+        
+        /* Disclaimer Specific */
+        .disclaimer-text {
+            font-size: 16px;
+            line-height: 1.7;
+            color: #64748b;
+            text-align: justify;
+            background: rgba(255, 255, 255, 0.6);
+            padding: 20px;
+            border-radius: 12px;
+            border-left: 4px solid #cbd5e1;
+        }
+
+        /* --- NAVIGATION CONTROLS STYLES --- */
+        .controls {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 100;
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-control {
+            background: #ffffff;
+            border: 1px solid #cbd5e1;
+            color: #475569;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            transition: all 0.2s;
+            font-size: 18px;
+        }
+
+        .btn-control:hover {
+            background: #f1f5f9;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+        }
+
+        /* --- PRINT / PDF EXPORT STYLES --- */
+        @media print {
+            body { 
+                overflow: visible; 
+                display: block; 
+                background: white; 
+                margin: 0;
+            }
+            .slide {
+                position: relative;
+                top: auto;
+                left: auto;
+                transform: none;
+                opacity: 1;
+                visibility: visible;
+                box-shadow: none;
+                page-break-after: always;
+                margin: 0 auto;
+                border: none;
+            }
+            .controls {
+                display: none;
+            }
+            video {
+                display: block;
+            }
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- SLIDE 1: INTRODUCTION -->
+    <div class="slide active">
+        <div class="blob blob-blue"></div>
+        <div class="blob blob-purple"></div>
+        
+        <div class="content layout-title">
+            <div>
+                <span class="pill">Official Release</span>
+                <h1>Formulari Ubat <br>PKD Kuala Langat</h1>
+                <p style="font-size: 24px;">A streamlined, digital reference for medical professionals to access formulary data, quotas, and restrictions instantly.</p>
+                <div style="margin-top: 40px; display: flex; gap: 20px;">
+                    <div style="text-align: center;">
+                        <i class="fa-solid fa-mobile-screen" style="font-size: 24px; color: #64748b; margin-bottom: 10px;"></i>
+                        <p style="font-size: 14px; margin: 0;">Mobile First</p>
+                    </div>
+                    <div style="text-align: center;">
+                        <i class="fa-solid fa-bolt" style="font-size: 24px; color: #64748b; margin-bottom: 10px;"></i>
+                        <p style="font-size: 14px; margin: 0;">Fast Search</p>
+                    </div>
+                    <div style="text-align: center;">
+                        <i class="fa-solid fa-shield-halved" style="font-size: 24px; color: #64748b; margin-bottom: 10px;"></i>
+                        <p style="font-size: 14px; margin: 0;">Secure</p>
+                    </div>
+                </div>
+            </div>
+            <div class="mockup-container">
+                <div class="phone-mockup">
+                    <!-- FILE REFERENCE: MainPage -->
+                    <img src="MainPage.png" alt="Main Page Screenshot showing Formulari Ubat title">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 2: SMART SEARCH -->
+    <div class="slide">
+        <div class="blob blob-green"></div>
+        <div class="blob blob-pink"></div>
+
+        <div class="content layout-split">
+            <div class="mockup-container">
+                <div class="phone-mockup">
+                    <!-- FILE REFERENCE: Feature_SearchMedicationByName -->
+                    <video src="Feature_SearchMedicationByName.mp4" autoplay loop muted playsinline></video>
+                </div>
+            </div>
+            <div class="text-block">
+                <h2>Smart Search & History</h2>
+                <p>Efficiency is key in a clinical setting. Our dynamic search allows users to find medications instantly by name.</p>
+                <ul class="feature-list">
+                    <li>
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <div>
+                            <strong>Instant Filtering</strong><br>
+                            Type prefixes like "Met" to see Methadone, Metformin, etc.
+                        </div>
+                    </li>
+                    <li>
+                        <i class="fa-solid fa-clock-rotate-left"></i>
+                        <div>
+                            <strong>Recently Viewed</strong><br>
+                            Quickly access your last searched drugs (e.g., Amlodipine) without retyping.
+                        </div>
+                    </li>
+                </ul>
+                <div style="margin-top: 20px; padding: 15px; background: #fff; border-radius: 12px; border-left: 4px solid #8b5cf6; box-shadow: 0 4px 12px rgba(0,0,0,0.05);">
+                    <small><strong>See it in action:</strong> The video shows filtering for 'Met' grouped drugs.</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 3: COMPREHENSIVE LISTINGS -->
+    <div class="slide">
+        <div class="blob blob-blue" style="bottom: 0; top: auto;"></div>
+        
+        <div class="content layout-split">
+            <div class="text-block">
+                <h2>Comprehensive Formulary</h2>
+                <p>Browse the complete catalog of approved medications sorted alphabetically.</p>
+                <p>Each entry provides critical meta-data at a glance:</p>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 30px;">
+                    <div style="background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
+                        <h3 style="color: #0ea5e9; font-size: 18px;">Categories</h3>
+                        <p style="font-size: 14px; margin: 0;">Clear categorization (e.g., Category B, C+) for quick reference.</p>
+                    </div>
+                    <div style="background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
+                        <h3 style="color: #0ea5e9; font-size: 18px;">Groups</h3>
+                        <p style="font-size: 14px; margin: 0;">Organized by system (e.g., Cardiovascular, Nervous System).</p>
+                    </div>
+                </div>
+            </div>
+            <div class="mockup-container">
+                <div class="phone-mockup">
+                    <!-- FILE REFERENCE: Feature_ShowAllMedications -->
+                    <video src="Feature_ShowAllMedications.mp4" autoplay loop muted playsinline></video>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 4: QUOTA & RESTRICTIONS -->
+    <div class="slide">
+        <div class="blob blob-pink" style="right: 0; left: auto;"></div>
+
+        <div class="content layout-split">
+            <div class="mockup-container" style="gap: 20px;">
+                <!-- Showing two mockups here to illustrate List vs Detail view -->
+                <div class="phone-mockup">
+                    <!-- FILE REFERENCE: Feature_ShowQuotaMedications -->
+                    <video src="Feature_ShowQuotaMedications.mp4" autoplay loop muted playsinline></video>
+                </div>
+                <div class="phone-mockup">
+                     <!-- FILE REFERENCE: Feature_ShowQuotaRestriction -->
+                    <video src="Feature_ShowQuotaRestriction.mp4" autoplay muted playsinline></video>
+                </div>
+            </div>
+            <div class="text-block" style="padding-left: 20px;">
+                <span class="pill" style="background: #fef3c7; color: #d97706;">Critical Feature</span>
+                <h2>Quota & Restrictions</h2>
+                <p>Never miss a prescribing restriction. The app highlights Quota items visually to ensure compliance.</p>
+                <ul class="feature-list">
+                    <li>
+                        <i class="fa-solid fa-triangle-exclamation" style="color: #f59e0b;"></i>
+                        <div>
+                            <strong>Yellow Highlights</strong><br>
+                            Quota items are clearly marked in the list view.
+                        </div>
+                    </li>
+                    <li>
+                        <i class="fa-solid fa-file-medical"></i>
+                        <div>
+                            <strong>Detailed Restrictions</strong><br>
+                            Specific notes like "10 PT / KK (KUOTA)" are prominent in the drug detail view.
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 5: NPRA INTEGRATION -->
+    <div class="slide">
+        <div class="blob blob-purple" style="top: -50px; left: 50px;"></div>
+        
+        <div class="content layout-split">
+            <div class="text-block">
+                <h2>External Verification</h2>
+                <p>Verify product registration details directly through the app without switching contexts.</p>
+                <div style="background: #fff; padding: 25px; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); border: 1px solid #e2e8f0;">
+                    <h3 style="margin-bottom: 10px;"><i class="fa-solid fa-link"></i> NPRA Quest 3+ Link</h3>
+                    <p style="font-size: 16px;">
+                        Clicking the "Brands Dispensed" button (e.g., MAL22086036X) seamlessly opens the official NPRA product search page.
+                    </p>
+                    <p style="font-size: 14px; color: #94a3b8; margin: 0;">
+                        *Ensures access to the latest leaflets and active ingredient data.
+                    </p>
+                </div>
+            </div>
+            <div class="mockup-container">
+                <div class="phone-mockup">
+                    <!-- FILE REFERENCE: Feature_LinkedtoNPRABrandSite -->
+                    <video src="Feature_LinkedtoNPRABrandSite.mp4" autoplay loop muted playsinline></video>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 6: USER EXPERIENCE (THEMES) -->
+    <div class="slide">
+        <div class="blob blob-green" style="width: 600px; height: 600px; opacity: 0.3;"></div>
+        
+        <div class="content layout-split">
+            <div class="mockup-container">
+                <div class="phone-mockup">
+                     <!-- FILE REFERENCE: Feature_ThemeChange -->
+                    <video src="Feature_ThemeChange.mov" autoplay loop muted playsinline></video>
+                </div>
+            </div>
+            <div class="text-block">
+                <h2>Adaptive Interface</h2>
+                <p>Designed for different lighting conditions in hospitals and clinics.</p>
+                <ul class="feature-list">
+                    <li>
+                        <i class="fa-solid fa-moon"></i>
+                        <div>
+                            <strong>Dark Mode</strong><br>
+                            Reduces eye strain during night shifts.
+                        </div>
+                    </li>
+                    <li>
+                        <i class="fa-solid fa-sun"></i>
+                        <div>
+                            <strong>Light Mode</strong><br>
+                            High contrast for bright office environments.
+                        </div>
+                    </li>
+                </ul>
+                <p><em>Toggle instantly via the top-right switch.</em></p>
+            </div>
+        </div>
+    </div>
+
+     <!-- SLIDE 7: DISCLAIMER -->
+    <div class="slide">
+        <div class="blob blob-blue"></div>
+        <div class="content layout-split">
+            <div class="text-block">
+                <h2>Important: Medical Information Disclaimer</h2>
+                <p class="disclaimer-text">This District Drug Catalogue application is intended for use only by qualified and licensed healthcare professionals as a supplementary reference tool. It is not a substitute for professional clinical judgment, diagnosis, or treatment. While every effort is made to ensure the accuracy and timeliness of the information regarding formularies, brands, and quotas, the data may not be exhaustive and is subject to change without notice. Users must independently verify all critical information—including but not limited to drug indications, dosages, contraindications, and contract details—with official sources such as the latest Formulary Ubat KKM (FUKKM), pharmacy department circulars, and other clinical guidelines before making any prescribing decisions. The developers and administrators of this application accept no responsibility or liability for any errors, omissions, or for any clinical outcomes resulting from the use of this information.</p>
+            </div>
+            <div class="mockup-container">
+                <div class="phone-mockup">
+                    <!-- FILE REFERENCE: DisclaimerView -->
+                    <video src="DisclaimerView.mp4" autoplay muted playsinline></video>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 8: OFFLINE CAPABILITY (NEW) -->
+    <div class="slide">
+        <div class="blob blob-green" style="left: -100px; bottom: -100px;"></div>
+        <div class="blob blob-blue" style="right: -100px; top: -100px;"></div>
+
+        <div class="content layout-split">
+            <div class="text-block">
+                <span class="pill" style="background: #dcfce7; color: #166534;">Connectivity</span>
+                <h2>Zero Signal? <br>No Problem.</h2>
+                <p>Remote clinics often suffer from poor connectivity. FUPKDKL is engineered to keep working where you work.</p>
+                
+                <div style="margin-top: 30px; display: flex; flex-direction: column; gap: 20px;">
+                    <div style="display: flex; align-items: center; gap: 20px;">
+                        <div style="width: 50px; height: 50px; background: #f1f5f9; border-radius: 12px; display: flex; align-items: center; justify-content: center;">
+                            <i class="fa-solid fa-database" style="color: #64748b; font-size: 20px;"></i>
+                        </div>
+                        <div>
+                            <h4 style="margin: 0; color: #1e293b;">Local Database</h4>
+                            <p style="margin: 0; font-size: 16px;">Data is stored on-device for instant access.</p>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; align-items: center; gap: 20px;">
+                        <div style="width: 50px; height: 50px; background: #fee2e2; border-radius: 12px; display: flex; align-items: center; justify-content: center;">
+                            <i class="fa-solid fa-wifi" style="color: #ef4444; font-size: 20px; text-decoration: line-through;"></i>
+                        </div>
+                        <div>
+                            <h4 style="margin: 0; color: #1e293b;">Works Offline</h4>
+                            <p style="margin: 0; font-size: 16px;">Search and view details without internet.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mockup-container">
+                <div style="position: relative;">
+                    <!-- Phone Mockup -->
+                    <div class="phone-mockup">
+                        <img src="MainPage.png" alt="App Main Page">
+                    </div>
+                    
+                    <!-- Floating Badge -->
+                    <div style="position: absolute; top: 40%; right: -60px; background: white; padding: 20px; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); display: flex; align-items: center; gap: 15px; border: 1px solid #e2e8f0;">
+                        <i class="fa-solid fa-check-circle" style="color: #22c55e; font-size: 32px;"></i>
+                        <div>
+                            <strong style="display: block; color: #1e293b; font-size: 18px;">System Ready</strong>
+                            <span style="font-size: 14px; color: #64748b;">No Connection</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 9: INSTALLATION GUIDE (UPDATED) -->
+    <div class="slide">
+        <div class="blob blob-purple" style="right: -100px; bottom: -100px;"></div>
+        <div class="blob blob-green" style="left: -100px; top: -100px;"></div>
+        
+        <div class="content" style="display: flex; flex-direction: column; height: 100%;">
+            
+            <!-- Header Section (Compact) -->
+            <div style="text-align: center; margin-bottom: 20px;">
+                <span class="pill" style="margin-bottom: 10px;">Deployment</span>
+                <div style="display: flex; align-items: center; justify-content: center; gap: 20px;">
+                    <h1 style="font-size: 56px; margin: 0;">Install on Your Device</h1>
+                </div>
+            </div>
+
+            <!-- 3-Column Layout -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 30px; width: 100%; flex-grow: 1; align-items: stretch;">
+                
+                <!-- Column 1: QR & Link -->
+                <div style="background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;">
+                    <div style="background: #f8fafc; padding: 15px; border-radius: 12px; margin-bottom: 20px; border: 1px solid #e2e8f0;">
+                        <!-- LOCAL FILE REFERENCE: qr-code.png -->
+                        <img src="qr-code.png" alt="QR Code" style="display: block; width: 180px; height: 180px; object-fit: contain;">
+                    </div>
+                    <p style="font-size: 16px; color: #64748b; margin-bottom: 8px;">Scan to open directly, or visit:</p>
+                    <a href="https://stardaus.github.io/formulari-ubat-pkdkl/" target="_blank" style="color: #6366f1; text-decoration: none; font-weight: 700; font-size: 18px; word-break: break-all;">
+                        stardaus.github.io/<br>formulari-ubat-pkdkl/
+                    </a>
+                </div>
+
+                <!-- Column 2: iOS Instructions -->
+                <div style="background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; display: flex; flex-direction: column; justify-content: flex-start;">
+                    <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 20px;">
+                        <i class="fa-brands fa-apple" style="font-size: 42px; color: #1e293b;"></i>
+                        <h3 style="font-size: 24px; margin: 0; color: #1e293b;">iOS (Safari)</h3>
+                    </div>
+                    <ol style="padding-left: 20px; margin: 0; color: #475569; font-size: 18px; line-height: 1.8;">
+                        <li style="margin-bottom: 15px;">Open the link in <strong>Safari</strong> browser.</li>
+                        <li style="margin-bottom: 15px;">Tap the <strong>Share</strong> icon <i class="fa-solid fa-arrow-up-from-bracket" style="font-size: 16px;"></i> at the bottom.</li>
+                        <li>Scroll down and tap <strong>Add to Home Screen</strong>.</li>
+                    </ol>
+                </div>
+
+                <!-- Column 3: Android Instructions -->
+                <div style="background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; display: flex; flex-direction: column; justify-content: flex-start;">
+                    <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 20px;">
+                        <i class="fa-brands fa-android" style="font-size: 42px; color: #3ddc84;"></i>
+                        <h3 style="font-size: 24px; margin: 0; color: #1e293b;">Android</h3>
+                    </div>
+                    <ol style="padding-left: 20px; margin: 0; color: #475569; font-size: 18px; line-height: 1.8;">
+                        <li style="margin-bottom: 15px;">Open the link in <strong>Chrome</strong> browser.</li>
+                        <li style="margin-bottom: 15px;">Tap the <strong>Menu</strong> (three dots) icon.</li>
+                        <li>Select <strong>Install App</strong> or <strong>Add to Home Screen</strong>.</li>
+                    </ol>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- NAVIGATION CONTROLS -->
+    <div class="controls">
+        <button class="btn-control" onclick="prevSlide()" title="Previous Slide (Left Arrow)">
+            <i class="fa-solid fa-chevron-left"></i>
+        </button>
+        <button class="btn-control" onclick="nextSlide()" title="Next Slide (Right Arrow)">
+            <i class="fa-solid fa-chevron-right"></i>
+        </button>
+    </div>
+
+    <script>
+        // JavaScript for Slide Navigation
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+
+        function showSlide(index) {
+            // Remove active class from all slides
+            slides.forEach(slide => {
+                slide.classList.remove('active');
+            });
+
+            // Handle wrapping
+            if (index >= slides.length) currentSlide = 0;
+            else if (index < 0) currentSlide = slides.length - 1;
+            else currentSlide = index;
+
+            // Add active class to current slide
+            slides[currentSlide].classList.add('active');
+        }
+
+        function nextSlide() {
+            showSlide(currentSlide + 1);
+        }
+
+        function prevSlide() {
+            showSlide(currentSlide - 1);
+        }
+
+        // Keyboard Navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+                nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+                prevSlide();
+            }
+        });
+
+        // Initialize first slide
+        showSlide(0);
+    </script>
+
+</body>
+</html>
