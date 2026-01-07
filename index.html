@@ -219,6 +219,16 @@
             padding-right: 40px;
         }
 
+        /* New Grid Layout for Installation Slide */
+        .install-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 30px;
+            width: 100%;
+            flex-grow: 1;
+            align-items: stretch;
+        }
+
         /* Feature List */
         .feature-list {
             list-style: none;
@@ -326,6 +336,13 @@
                 flex-direction: column;
             }
 
+            /* Responsive fix for Installation Grid: Force Single Column */
+            .install-grid {
+                display: flex;
+                flex-direction: column;
+                gap: 20px;
+            }
+
             /* Reorder Layouts: Visuals on top/bottom depending on preference */
             .layout-split .mockup-container {
                 order: -1;
@@ -349,14 +366,6 @@
                 width: 220px;
                 height: 450px;
                 margin: 0 auto;
-            }
-
-            /* Slide 9 Grid Fix - Ensure it stacks vertically on mobile */
-            .slide:last-child .content>div[style*="grid-template-columns"] {
-                grid-template-columns: 1fr !important;
-                display: flex !important;
-                flex-direction: column;
-                gap: 20px !important;
             }
 
             /* Typography Scaling */
@@ -737,7 +746,7 @@
         </div>
     </div>
 
-    <!-- SLIDE 9: INSTALLATION GUIDE (UPDATED) -->
+    <!-- SLIDE 9: INSTALLATION GUIDE (UPDATED WITH CLASS) -->
     <div class="slide">
         <div class="blob blob-purple" style="right: -100px; bottom: -100px;"></div>
         <div class="blob blob-green" style="left: -100px; top: -100px;"></div>
@@ -752,9 +761,8 @@
                 </div>
             </div>
 
-            <!-- 3-Column Layout -->
-            <div
-                style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 30px; width: 100%; flex-grow: 1; align-items: stretch;">
+            <!-- 3-Column Layout with dedicated CLASS -->
+            <div class="install-grid">
 
                 <!-- Column 1: QR & Link -->
                 <div
